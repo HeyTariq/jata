@@ -1,13 +1,19 @@
-# jata
+<p align="center">
+  <img src="src-tauri/icons/128x128@2x.png" alt="" width="96" height="96">
+</p>
 
-[![CI](https://github.com/HeyTariq/jata/actions/workflows/ci.yml/badge.svg)](https://github.com/HeyTariq/jata/actions/workflows/ci.yml)
+<h1 align="center">jata</h1>
 
-Just another todo app. A small desktop todo list with drag-to-reorder, projects,
-tags, and a GitHub-style activity graph of everything you have finished.
+<p align="center">just another todo app</p>
 
-Tauri 2 with a Rust and SQLite core, a plain TypeScript frontend, no UI
-framework and no runtime npm dependencies. The release bundle is a few
-megabytes and starts instantly.
+<p align="center">
+  A small desktop todo list with drag-to-reorder, projects, tags, and a
+  GitHub-style activity graph of everything you have finished.
+</p>
+
+<p align="center">
+  <a href="https://github.com/HeyTariq/jata/actions/workflows/ci.yml"><img src="https://github.com/HeyTariq/jata/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+</p>
 
 ## What it does
 
@@ -85,27 +91,6 @@ build`, then `cargo fmt --all --check`, `cargo clippy --all-targets --locked --
 -D warnings`, and `cargo test --locked`. Run them locally and CI holds no
 surprises.
 
-## Cutting a release
-
-The version lives in three files and all three must agree with the tag, or the
-release workflow stops before it builds anything.
-
-1. Set the same version in `package.json`, `src-tauri/Cargo.toml`, and
-   `src-tauri/tauri.conf.json`.
-2. `cd src-tauri && cargo check` to write the new version into `Cargo.lock`.
-   Without this the `--locked` builds fail.
-3. Commit, then tag and push:
-
-```sh
-git tag v0.2.0
-git push origin v0.2.0
-```
-
-That builds Linux, Windows, and both macOS architectures in parallel and
-attaches the bundles to a **draft** release. Write the notes and publish it by
-hand. A draft means a matrix leg that fails never leaves a published release
-missing a platform.
-
 ## Where your data lives
 
 One SQLite file in the platform data directory, for example
@@ -124,3 +109,7 @@ src-tauri/src/
 
 Rust owns everything that touches ordering or history, so it can be tested
 without a browser. The frontend renders and handles input.
+
+## License
+
+[MIT](LICENSE).
