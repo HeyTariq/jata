@@ -1,5 +1,7 @@
 # jata
 
+[![CI](https://github.com/HeyTariq/jata/actions/workflows/ci.yml/badge.svg)](https://github.com/HeyTariq/jata/actions/workflows/ci.yml)
+
 Just another todo app. A small desktop todo list with drag-to-reorder, projects,
 tags, and a GitHub-style activity graph of everything you have finished.
 
@@ -38,6 +40,23 @@ Pay the water bill #home @tomorrow
 - `#word` attaches a tag.
 - `@today`, `@tomorrow`, `@friday`, `@2026-09-01`, `@+3d` set a due date.
 
+## Installing
+
+Grab a build from the [releases page](https://github.com/HeyTariq/jata/releases).
+
+| Platform | File |
+| --- | --- |
+| Linux (Debian, Ubuntu) | `.deb` |
+| Linux (Fedora, Nobara) | `.rpm` |
+| Windows | `-setup.exe` |
+| macOS, Apple Silicon | `_aarch64.dmg` |
+| macOS, Intel | `_x64.dmg` |
+
+The macOS and Windows bundles are not code signed, because signing them means
+paying Apple and a certificate authority for the privilege. On macOS the first
+launch needs a right-click and **Open** rather than a double-click. On Windows,
+SmartScreen shows a warning: **More info**, then **Run anyway**.
+
 ## Running it
 
 ```sh
@@ -60,6 +79,32 @@ Tests for the data layer, ordering, and activity queries:
 ```sh
 cd src-tauri && cargo test
 ```
+
+CI runs exactly these on every push and pull request to `main`: `npm run
+build`, then `cargo fmt --all --check`, `cargo clippy --all-targets --locked --
+-D warnings`, and `cargo test --locked`. Run them locally and CI holds no
+surprises.
+
+## Cutting a release
+
+The version lives in three files and all three must agree with the tag, or the
+release workflow stops before it builds anything.
+
+1. Set the same version in `package.json`, `src-tauri/Cargo.toml`, and
+   `src-tauri/tauri.conf.json`.
+2. `cd src-tauri && cargo check` to write the new version into `Cargo.lock`.
+   Without this the `--locked` builds fail.
+3. Commit, then tag and push:
+
+```sh
+git tag v0.2.0
+git push origin v0.2.0
+```
+
+That builds Linux, Windows, and both macOS architectures in parallel and
+attaches the bundles to a **draft** release. Write the notes and publish it by
+hand. A draft means a matrix leg that fails never leaves a published release
+missing a platform.
 
 ## Where your data lives
 

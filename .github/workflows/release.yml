@@ -1,0 +1,115 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  # Cheap gate: a mistyped tag should fail in seconds, not after four
+  # parallel bundle builds have finished.
+  verify-version:
+    name: Verify version
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Tag must match package.json, Cargo.toml and tauri.conf.json
+        run: |
+          set -euo pipefail
+          tag="${GITHUB_REF_NAME#v}"
+          pkg=$(jq -r .version package.json)
+          conf=$(jq -r .version src-tauri/tauri.conf.json)
+          cargo=$(grep -m1 '^version = ' src-tauri/Cargo.toml | cut -d'"' -f2)
+
+          echo "tag=$tag package.json=$pkg tauri.conf.json=$conf Cargo.toml=$cargo"
+
+          fail=0
+          for pair in "package.json:$pkg" "tauri.conf.json:$conf" "Cargo.toml:$cargo"; do
+            if [ "${pair#*:}" != "$tag" ]; then
+              echo "::error::${pair%%:*} is ${pair#*:}, expected $tag"
+              fail=1
+            fi
+          done
+          exit $fail
+
+  build:
+    name: Build ${{ matrix.label }}
+    needs: verify-version
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # 22.04 rather than latest: glibc is forward-incompatible, so
+          # bundles built on 24.04 will not run on older distros.
+          - label: linux-x86_64
+            runner: ubuntu-22.04
+            target: ""
+          - label: windows-x86_64
+            runner: windows-latest
+            target: ""
+          - label: macos-aarch64
+            runner: macos-latest
+            target: aarch64-apple-darwin
+          - label: macos-x86_64
+            runner: macos-latest
+            target: x86_64-apple-darwin
+
+    runs-on: ${{ matrix.runner }}
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install system dependencies
+        if: matrix.runner == 'ubuntu-22.04'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libwebkit2gtk-4.1-dev \
+            libjavascriptcoregtk-4.1-dev \
+            libsoup-3.0-dev \
+            libayatana-appindicator3-dev \
+            librsvg2-dev \
+            libxdo-dev \
+            libssl-dev \
+            build-essential \
+            patchelf \
+            file
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri
+          key: ${{ matrix.label }}
+
+      - name: Install npm dependencies
+        run: npm ci
+
+      # tauri-action runs beforeBuildCommand (npm run build) itself, so the
+      # frontend does not need building separately here.
+      - uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tagName: ${{ github.ref_name }}
+          releaseName: jata ${{ github.ref_name }}
+          releaseBody: |
+            Download the build for your platform below.
+
+            macOS and Windows bundles are unsigned. See the README for how to
+            get past Gatekeeper and SmartScreen on first launch.
+          # Draft, so a half-failed matrix never publishes a release that is
+          # missing platforms. Write the notes and publish by hand.
+          releaseDraft: true
+          prerelease: false
+          args: ${{ matrix.target && format('--target {0}', matrix.target) || '' }}

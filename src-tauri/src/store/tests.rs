@@ -297,10 +297,7 @@ fn completed_todos_are_hidden_unless_asked_for() {
     )
     .unwrap();
     // Active first, completed after.
-    assert_eq!(
-        all.iter().map(|t| &t.title).collect::<Vec<_>>(),
-        ["b", "a"]
-    );
+    assert_eq!(all.iter().map(|t| &t.title).collect::<Vec<_>>(), ["b", "a"]);
 }
 
 #[test]
