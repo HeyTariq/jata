@@ -7,13 +7,18 @@
 <p align="center">just another todo app</p>
 
 <p align="center">
-  A small desktop todo list with drag-to-reorder, projects, tags, and a
-  GitHub-style activity graph of everything you have finished.
+  A small, local-first desktop todo list with drag-to-reorder, projects, tags,
+  and a GitHub-style activity graph of everything you have finished.
 </p>
 
 <p align="center">
   <a href="https://github.com/HeyTariq/jata/actions/workflows/ci.yml"><img src="https://github.com/HeyTariq/jata/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://github.com/HeyTariq/jata/releases/latest"><img src="https://img.shields.io/github/v/release/HeyTariq/jata" alt="Latest release"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="MIT license"></a>
 </p>
+
+Everything lives in one SQLite file on your machine. There is no account, no
+sync, and no network access.
 
 ## What it does
 
@@ -35,20 +40,9 @@
   search, `Ctrl+K` for the command palette, `?` for the full list.
 - **Light and dark.** Follows the system theme, with a manual override.
 
-## Quick add syntax
-
-Type into the box at the top of any list:
-
-```
-Pay the water bill #home @tomorrow
-```
-
-- `#word` attaches a tag.
-- `@today`, `@tomorrow`, `@friday`, `@2026-09-01`, `@+3d` set a due date.
-
 ## Installing
 
-Grab a build from the [releases page](https://github.com/HeyTariq/jata/releases).
+Grab a build from the [releases page](https://github.com/HeyTariq/jata/releases/latest).
 
 | Platform | File |
 | --- | --- |
@@ -63,7 +57,57 @@ paying Apple and a certificate authority for the privilege. On macOS the first
 launch needs a right-click and **Open** rather than a double-click. On Windows,
 SmartScreen shows a warning: **More info**, then **Run anyway**.
 
-## Running it
+## Quick add syntax
+
+Type into the box at the top of any list:
+
+```
+Pay the water bill #home @tomorrow
+```
+
+- `#word` attaches a tag.
+- `@today`, `@tomorrow`, a weekday name (`@friday`), an ISO date
+  (`@2026-09-01`), or an offset in days (`@+3d`) sets a due date.
+
+Anything that does not parse as a date is left in the title, so an email
+address survives intact.
+
+## Keyboard shortcuts
+
+| Key | Action |
+| --- | --- |
+| `j` / `k`, arrows | Move the selection |
+| `g g` / `G` | First / last todo |
+| `x`, `Space` | Complete or un-complete |
+| `n` | New todo |
+| `e` | Edit the selected todo |
+| `d` | Delete the selected todo |
+| `Alt+↑` / `Alt+↓` | Move the selected todo up or down |
+| `/` | Search |
+| `Ctrl+K` | Command palette |
+| `1`–`9` | Jump to a list |
+| `g i` / `g a` | Inbox / activity graph |
+| `t` | Cycle theme: system, light, dark |
+| `?` | Show all shortcuts |
+
+## Where your data lives
+
+One SQLite file named `jata.db` in the platform data directory:
+
+| Platform | Path |
+| --- | --- |
+| Linux | `~/.local/share/dev.jata.app/jata.db` |
+| macOS | `~/Library/Application Support/dev.jata.app/jata.db` |
+| Windows | `%APPDATA%\dev.jata.app\jata.db` |
+
+Back it up by copying that file while the app is closed.
+
+## Building from source
+
+You need [Node.js](https://nodejs.org) 22 or newer, [Rust](https://rustup.rs)
+1.85 or newer, and the [Tauri v2 system
+dependencies](https://v2.tauri.app/start/prerequisites/) for your platform
+(webkit2gtk and friends on Linux).
 
 ```sh
 npm install
@@ -86,15 +130,20 @@ Tests for the data layer, ordering, and activity queries:
 cd src-tauri && cargo test
 ```
 
-CI runs exactly these on every push and pull request to `main`: `npm run
-build`, then `cargo fmt --all --check`, `cargo clippy --all-targets --locked --
--D warnings`, and `cargo test --locked`. Run them locally and CI holds no
-surprises.
+## Contributing
 
-## Where your data lives
+Issues and pull requests are welcome. CI runs exactly these on every push and
+pull request to `main`, so run them locally and it holds no surprises:
 
-One SQLite file in the platform data directory, for example
-`~/.local/share/dev.jata.app/jata.db` on Linux. Back it up by copying that file.
+```sh
+npm run build                                        # tsc --noEmit && vite build
+cd src-tauri
+cargo fmt --all --check
+cargo clippy --all-targets --locked -- -D warnings
+cargo test --locked
+```
+
+To report a security issue, see [SECURITY.md](SECURITY.md).
 
 ## Layout
 
