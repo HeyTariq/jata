@@ -176,9 +176,8 @@ fn set_tags(conn: &Connection, todo_id: i64, tags: &[String]) -> Result<()> {
             continue;
         }
         conn.execute("INSERT OR IGNORE INTO tags (name) VALUES (?1)", [&name])?;
-        let tag_id: i64 = conn.query_row("SELECT id FROM tags WHERE name = ?1", [&name], |r| {
-            r.get(0)
-        })?;
+        let tag_id: i64 =
+            conn.query_row("SELECT id FROM tags WHERE name = ?1", [&name], |r| r.get(0))?;
         conn.execute(
             "INSERT OR IGNORE INTO todo_tags (todo_id, tag_id) VALUES (?1, ?2)",
             params![todo_id, tag_id],
