@@ -81,3 +81,11 @@ export function daysUntil(iso: string): number {
 
 export const isValidISO = (s: string): boolean =>
   /^\d{4}-\d{2}-\d{2}$/.test(s) && !Number.isNaN(fromISO(s).getTime());
+
+/** Time-of-day greeting for the default list header. */
+export function greeting(): string {
+  const hour = new Date().getHours();
+  if (hour < 12) return "Good morning";
+  if (hour < 18) return "Good afternoon";
+  return "Good evening";
+}

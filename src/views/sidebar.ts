@@ -1,4 +1,4 @@
-import { el, icon, replace } from "../dom";
+import { el, icon, replace, type IconName } from "../dom";
 import * as store from "../store";
 import { state } from "../store";
 
@@ -12,13 +12,18 @@ function navItem(
   return el(
     "button",
     {
-      class: `nav-item${active ? " is-active" : ""}`,
+      class: `nav-item${extra ? " is-primary" : ""}${active ? " is-active" : ""}`,
       on: { click: onClick },
     },
     extra ?? el("span", { class: "dot" }),
     el("span", { class: "label" }, label),
     count !== null && count > 0 ? el("span", { class: "count" }, count) : null,
   );
+}
+
+/** The leading icon that marks a row as one of the app's main destinations. */
+function navIcon(name: IconName) {
+  return el("span", { class: "nav-icon" }, icon(name, 17));
 }
 
 export function renderSidebar(root: HTMLElement): void {
@@ -29,24 +34,37 @@ export function renderSidebar(root: HTMLElement): void {
     el("div", { class: "brand" }, el("strong", {}, "jata"), el("span", {}, "just another todo app")),
   ];
 
+  // The default list and Activity are where the app is used day to day, so
+  // they lead with icons and sit apart from the project rows below.
+  const primary: HTMLElement[] = [];
   if (inbox) {
-    nodes.push(
+    primary.push(
       navItem(
         inbox.name,
         view.kind === "project" && view.id === inbox.id,
         inbox.openCount,
         () => store.setView({ kind: "project", id: inbox.id }).then(store.rememberView),
+        navIcon("inbox"),
       ),
     );
   }
-  nodes.push(
-    navItem("All todos", view.kind === "all", null, () =>
-      store.setView({ kind: "all" }).then(store.rememberView),
+  primary.push(
+    navItem(
+      "All todos",
+      view.kind === "all",
+      null,
+      () => store.setView({ kind: "all" }).then(store.rememberView),
+      navIcon("layers"),
     ),
-    navItem("Activity", view.kind === "activity", null, () =>
-      store.setView({ kind: "activity" }).then(store.rememberView),
+    navItem(
+      "Activity",
+      view.kind === "activity",
+      null,
+      () => store.setView({ kind: "activity" }).then(store.rememberView),
+      navIcon("activity"),
     ),
   );
+  nodes.push(el("div", { class: "nav-primary" }, ...primary));
 
   nodes.push(
     el(
@@ -72,7 +90,7 @@ export function renderSidebar(root: HTMLElement): void {
 
   const projects = state.projects.filter((p) => !p.isDefault);
   if (projects.length === 0) {
-    nodes.push(el("div", { class: "nav-item", style: { color: "var(--text-faint)" } }, "No projects yet"));
+    nodes.push(el("div", { class: "nav-empty" }, "No projects yet"));
   }
   for (const project of projects) {
     const item = navItem(
@@ -111,9 +129,9 @@ export function renderSidebar(root: HTMLElement): void {
   }
 
   const themeLabels: Record<store.Theme, string> = {
-    system: "Theme: system",
-    light: "Theme: light",
-    dark: "Theme: dark",
+    system: "System",
+    light: "Light",
+    dark: "Dark",
   };
   nodes.push(
     el(
@@ -130,15 +148,18 @@ export function renderSidebar(root: HTMLElement): void {
             },
           },
         },
+        icon("theme", 14),
         themeLabels[state.theme],
       ),
       el(
         "button",
         {
           title: "Keyboard shortcuts (?)",
+          attrs: { "aria-label": "Keyboard shortcuts" },
           on: { click: () => window.dispatchEvent(new CustomEvent("jata:shortcuts")) },
         },
-        "?",
+        icon("help", 14),
+        "Shortcuts",
       ),
     ),
   );
