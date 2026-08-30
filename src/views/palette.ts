@@ -128,7 +128,7 @@ export function openPalette(mode: "command" | "search" = "command"): void {
     }
   });
 
-  const panel = el("div", { class: "palette" }, input, list);
+  const panel = el("div", { class: "overlay-panel palette" }, input, list);
   overlay = el(
     "div",
     {
@@ -166,7 +166,7 @@ export function openShortcuts(): void {
   closePalette();
   const panel = el(
     "div",
-    { class: "shortcuts" },
+    { class: "overlay-panel shortcuts" },
     el("h2", {}, "Keyboard shortcuts"),
     el(
       "dl",
@@ -180,8 +180,7 @@ export function openShortcuts(): void {
   overlay = el(
     "div",
     {
-      class: "overlay",
-      style: { "padding-top": "14vh" },
+      class: "overlay is-shortcuts",
       on: { pointerdown: () => closePalette() },
     },
     panel,

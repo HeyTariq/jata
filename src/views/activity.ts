@@ -1,6 +1,6 @@
 import * as api from "../api";
 import * as dates from "../dates";
-import { append, el, replace } from "../dom";
+import { append, el, icon, replace } from "../dom";
 import * as store from "../store";
 
 const WEEKDAY_LABELS = ["", "Mon", "", "Wed", "", "Fri", ""];
@@ -204,9 +204,19 @@ export function renderActivity(root: HTMLElement): void {
 
   const summary = el(
     "div",
-    { class: "activity-summary" },
-    el("div", {}, el("strong", {}, yearTotal), " completed in the last year"),
-    el("div", {}, el("strong", {}, streak), " day streak"),
+    { class: "stat-row" },
+    el(
+      "div",
+      { class: "stat-card" },
+      el("strong", {}, yearTotal),
+      el("span", {}, "completed in the last year"),
+    ),
+    el(
+      "div",
+      { class: "stat-card" },
+      el("strong", {}, streak),
+      el("span", {}, "day streak"),
+    ),
   );
 
   const rangeBar = el(
@@ -236,6 +246,7 @@ export function renderActivity(root: HTMLElement): void {
       el(
         "div",
         { class: "empty" },
+        icon("activity", 32),
         el("strong", {}, "Nothing completed in this range"),
         "Pick another date, or check something off.",
       ),

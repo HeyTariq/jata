@@ -105,7 +105,7 @@ function todoRow(todo: Todo, draggable: boolean): HTMLElement {
     },
     draggable
       ? el("span", { class: "grip", title: "Drag to reorder" }, icon("grip"))
-      : el("span", { class: "grip", style: { visibility: "hidden" } }, icon("grip")),
+      : el("span", { class: "grip is-hidden" }, icon("grip")),
     el(
       "button",
       {
@@ -147,16 +147,11 @@ function todoRow(todo: Todo, draggable: boolean): HTMLElement {
 /** Inline editor: title, due date and tags, saved with Enter. */
 function editorRow(todo: Todo): HTMLElement {
   const title = el("input", { class: "title-input", value: todo.title }) as HTMLInputElement;
-  const due = el("input", {
-    type: "date",
-    value: todo.dueDate ?? "",
-    style: { "max-width": "150px" },
-  }) as HTMLInputElement;
+  const due = el("input", { type: "date", value: todo.dueDate ?? "" }) as HTMLInputElement;
   const tags = el("input", {
-    class: "title-input",
+    class: "title-input is-tags",
     value: todo.tags.map((t) => `#${t}`).join(" "),
     placeholder: "#tags",
-    style: { "max-width": "180px" },
   }) as HTMLInputElement;
 
   const save = () => {
@@ -185,9 +180,9 @@ function editorRow(todo: Todo): HTMLElement {
   return el(
     "li",
     { class: "todo is-selected", dataset: { id: String(todo.id) } },
-    el("span", { class: "grip", style: { visibility: "hidden" } }, icon("grip")),
-    el("span", { class: "todo-body", style: { display: "flex", gap: "8px" } }, title, due, tags),
-    el("button", { class: "toggle", on: { click: save } }, "Save"),
+    el("span", { class: "grip is-hidden" }, icon("grip")),
+    el("span", { class: "todo-body todo-editor" }, title, due, tags),
+    el("button", { class: "btn is-primary", on: { click: save } }, "Save"),
   );
 }
 
@@ -218,28 +213,31 @@ function groupTodos(todos: Todo[]): Group[] {
   return buckets.filter((b) => b.todos.length > 0);
 }
 
-function viewTitle(): { title: string; subtitle: string } {
+function viewTitle(): { title: string; subtitle: string; greet: boolean } {
   const view = state.view;
   switch (view.kind) {
     case "project": {
       const project = state.projects.find((p) => p.id === view.id);
       return {
         title: project?.name ?? "List",
-        subtitle: project?.isDefault ? "Quick capture and general todos" : "Project",
+        subtitle: project?.isDefault
+          ? dates.formatDateFull(dates.today())
+          : "Project",
+        greet: project?.isDefault === true,
       };
     }
     case "tag":
-      return { title: `#${view.name}`, subtitle: "Tagged across all projects" };
+      return { title: `#${view.name}`, subtitle: "Tagged across all projects", greet: false };
     case "search":
-      return { title: `Search: ${view.query}`, subtitle: "Titles and notes" };
+      return { title: `Search: ${view.query}`, subtitle: "Titles and notes", greet: false };
     default:
-      return { title: "All todos", subtitle: "Every project at once" };
+      return { title: "All todos", subtitle: "Every project at once", greet: false };
   }
 }
 
 export function renderList(root: HTMLElement): void {
   const scroller = el("div", { class: "scroll" });
-  const { title, subtitle } = viewTitle();
+  const { title, subtitle, greet } = viewTitle();
   const active = state.todos.filter((t) => t.completedAt === null);
   const done = state.todos.filter((t) => t.completedAt !== null);
   const draggable = store.canReorder();
@@ -247,24 +245,34 @@ export function renderList(root: HTMLElement): void {
   const header = el(
     "div",
     { class: "view-header" },
-    el("div", {}, el("h1", {}, title), el("div", { class: "subtitle" }, subtitle)),
+    el(
+      "div",
+      {},
+      greet ? el("div", { class: "greeting" }, dates.greeting()) : null,
+      el("h1", {}, title),
+      el("div", { class: "subtitle" }, subtitle),
+    ),
     el("div", { class: "spacer" }),
     el(
-      "button",
-      {
-        class: `toggle${state.groupByDue ? " is-on" : ""}`,
-        title: "Group by due date (reordering is off while grouped)",
-        on: { click: () => store.toggleSetting("groupByDue") },
-      },
-      "Group by due date",
-    ),
-    el(
-      "button",
-      {
-        class: `toggle${state.showCompleted ? " is-on" : ""}`,
-        on: { click: () => store.toggleSetting("showCompleted") },
-      },
-      "Show completed",
+      "div",
+      { class: "header-actions" },
+      el(
+        "button",
+        {
+          class: `toggle${state.groupByDue ? " is-on" : ""}`,
+          title: "Group by due date (reordering is off while grouped)",
+          on: { click: () => store.toggleSetting("groupByDue") },
+        },
+        "Group by due date",
+      ),
+      el(
+        "button",
+        {
+          class: `toggle${state.showCompleted ? " is-on" : ""}`,
+          on: { click: () => store.toggleSetting("showCompleted") },
+        },
+        "Show completed",
+      ),
     ),
   );
 
@@ -305,6 +313,7 @@ export function renderList(root: HTMLElement): void {
       el(
         "div",
         { class: "empty" },
+        icon("list", 32),
         el("strong", {}, "Nothing here yet"),
         "Type above to add your first todo.",
       ),
