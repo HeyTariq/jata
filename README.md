@@ -21,8 +21,10 @@ Everything lives in one SQLite file on your machine. There is no account, no
 sync, and no network access.
 
 <p align="center">
-  <img src="docs/screenshots/list.png" alt="Every todo from every project, grouped into Overdue, Today, Upcoming, and No date, with tags and due badges" width="420">
-  <img src="docs/screenshots/activity.png" alt="A year of completions as a heatmap, above the todos finished in the last seven days" width="420">
+  <img src="docs/screenshots/list.png" alt="Every todo from every project, grouped into Overdue, Today, Upcoming, and No date, with tags and due badges" width="560">
+  <br>
+  <br>
+  <img src="docs/screenshots/activity.png" alt="A year of completions as a heatmap, above the todos finished in the last seven days" width="560">
 </p>
 
 ## What it does
