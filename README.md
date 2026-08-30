@@ -36,8 +36,8 @@ sync, and no network access.
   deleting the todo.
 - **Due dates.** Optional per todo, with overdue and today highlighting and an
   optional grouped view.
-- **Keyboard first.** `j`/`k` to move, `x` to complete, `n` to add, `/` to
-  search, `Ctrl+K` for the command palette, `?` for the full list.
+- **Type to add.** On any list, just start typing. The first character lands in
+  the quick-add box, so a todo is one keystroke away and nothing else is.
 - **Light and dark.** Follows the system theme, with a manual override.
 
 ## Installing
@@ -74,21 +74,16 @@ address survives intact.
 
 ## Keyboard shortcuts
 
+There are two, and neither of them fires by accident.
+
 | Key | Action |
 | --- | --- |
-| `j` / `k`, arrows | Move the selection |
-| `g g` / `G` | First / last todo |
-| `x`, `Space` | Complete or un-complete |
-| `n` | New todo |
-| `e` | Edit the selected todo |
-| `d` | Delete the selected todo |
-| `Alt+↑` / `Alt+↓` | Move the selected todo up or down |
-| `/` | Search |
-| `Ctrl+K` | Command palette |
-| `1`–`9` | Jump to a list |
-| `g i` / `g a` | Inbox / activity graph |
-| `t` | Cycle theme: system, light, dark |
-| `?` | Show all shortcuts |
+| `Ctrl+N` | New todo, from any view |
+| `Ctrl+P` | New project |
+
+On a list, typing any printable character focuses the quick-add box and keeps
+that character, so most of the time you never reach for either one. `Escape`
+cancels an inline edit or a drag; `Enter` saves.
 
 ## Where your data lives
 

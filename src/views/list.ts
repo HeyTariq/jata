@@ -7,7 +7,12 @@ import { state, type Todo } from "../store";
 let editingId: number | null = null;
 let quickAdd: HTMLInputElement | null = null;
 
-export const focusQuickAdd = (): void => quickAdd?.focus();
+/** Focuses the quick-add box, seeding it with the character that summoned it. */
+export function startQuickAdd(initial = ""): void {
+  if (!quickAdd) return;
+  quickAdd.value += initial;
+  quickAdd.focus();
+}
 
 export function beginEdit(id: number | null): void {
   editingId = id;
@@ -228,8 +233,6 @@ function viewTitle(): { title: string; subtitle: string; greet: boolean } {
     }
     case "tag":
       return { title: `#${view.name}`, subtitle: "Tagged across all projects", greet: false };
-    case "search":
-      return { title: `Search: ${view.query}`, subtitle: "Titles and notes", greet: false };
     default:
       return { title: "All todos", subtitle: "Every project at once", greet: false };
   }
