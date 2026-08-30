@@ -5,7 +5,6 @@ export type View =
   | { kind: "project"; id: number }
   | { kind: "all" }
   | { kind: "tag"; name: string }
-  | { kind: "search"; query: string }
   | { kind: "activity" };
 
 export type Theme = "system" | "light" | "dark";
@@ -82,8 +81,6 @@ function queryFor(view: View): api.TodoQuery {
       return { ...base, projectId: view.id };
     case "tag":
       return { ...base, tag: view.name };
-    case "search":
-      return { ...base, search: view.query, includeCompleted: true };
     default:
       return base;
   }

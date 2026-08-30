@@ -2,6 +2,11 @@ import { el, icon, replace, type IconName } from "../dom";
 import * as store from "../store";
 import { state } from "../store";
 
+export function promptNewProject(): void {
+  const name = window.prompt("Project name");
+  if (name?.trim()) void store.addProject(name);
+}
+
 function navItem(
   label: string,
   active: boolean,
@@ -74,14 +79,9 @@ export function renderSidebar(root: HTMLElement): void {
       el(
         "button",
         {
-          title: "New project",
+          title: "New project (Ctrl+P)",
           attrs: { "aria-label": "New project" },
-          on: {
-            click: () => {
-              const name = window.prompt("Project name");
-              if (name?.trim()) store.addProject(name);
-            },
-          },
+          on: { click: promptNewProject },
         },
         icon("plus", 12),
       ),
@@ -140,7 +140,7 @@ export function renderSidebar(root: HTMLElement): void {
       el(
         "button",
         {
-          title: "Cycle theme (t)",
+          title: "Cycle theme",
           on: {
             click: () => {
               const order: store.Theme[] = ["system", "light", "dark"];
@@ -150,16 +150,6 @@ export function renderSidebar(root: HTMLElement): void {
         },
         icon("theme", 14),
         themeLabels[state.theme],
-      ),
-      el(
-        "button",
-        {
-          title: "Keyboard shortcuts (?)",
-          attrs: { "aria-label": "Keyboard shortcuts" },
-          on: { click: () => window.dispatchEvent(new CustomEvent("jata:shortcuts")) },
-        },
-        icon("help", 14),
-        "Shortcuts",
       ),
     ),
   );
