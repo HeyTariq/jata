@@ -20,6 +20,10 @@
 Everything lives in one SQLite file on your machine. There is no account, no
 sync, and no network access.
 
+<p align="center">
+  <img src="docs/screenshots/list.png" alt="Every todo from every project, grouped into Overdue, Today, Upcoming, and No date, with tags and due badges" width="900">
+</p>
+
 ## What it does
 
 - **Lists and projects.** An always-present Inbox for quick capture, plus as
@@ -30,6 +34,9 @@ sync, and no network access.
 - **Activity graph.** A year of completions as a heatmap, exactly like the one
   you already know. Every check and un-check is recorded, so the squares always
   match what you actually did.
+
+  <img src="docs/screenshots/activity.png" alt="A year of completions as a heatmap, above the todos finished in the last seven days" width="900">
+
 - **Look up a day or a range.** Click a square, or pick two dates, and see the
   todos you completed with the time you finished them. Entries keep a snapshot
   of the title, project, and tags, so history survives renaming a project or
