@@ -20,16 +20,10 @@
 Everything lives in one SQLite file on your machine. There is no account, no
 sync, and no network access.
 
-<table align="center">
-  <tr>
-    <td width="50%"><img src="docs/screenshots/list.png" alt="Every todo from every project, grouped into Overdue, Today, Upcoming, and No date, with tags and due badges" width="420"></td>
-    <td width="50%"><img src="docs/screenshots/activity.png" alt="A year of completions as a heatmap, above the todos finished in the last seven days" width="420"></td>
-  </tr>
-  <tr>
-    <td align="center">Every todo, grouped by when it is due</td>
-    <td align="center">A year of completions, and what you finished this week</td>
-  </tr>
-</table>
+<p align="center">
+  <img src="docs/screenshots/list.png" alt="Every todo from every project, grouped into Overdue, Today, Upcoming, and No date, with tags and due badges" width="420">
+  <img src="docs/screenshots/activity.png" alt="A year of completions as a heatmap, above the todos finished in the last seven days" width="420">
+</p>
 
 ## What it does
 
